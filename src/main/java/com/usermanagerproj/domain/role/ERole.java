@@ -1,7 +1,7 @@
 package com.usermanagerproj.domain.role;
 
 public enum ERole {
-    SUPERADMIN,
-    ADMIN,
-    USER,
+    ROLE_SUPERADMIN,
+    ROLE_ADMIN,
+    ROLE_USER,
 }

@@ -1,11 +1,13 @@
 package com.usermanagerproj.domain.role;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "role")
 public class Role {
     @Id
@@ -15,4 +17,8 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column
     private ERole name;
+
+    public Role(ERole name) {
+        this.name = name;
+    }
 }
