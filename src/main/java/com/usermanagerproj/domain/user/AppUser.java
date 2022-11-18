@@ -29,16 +29,18 @@ public class AppUser {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    @Column
+    @Column(length = 50)
     private String firstName;
-    @Column
+    @Column(length = 50)
     private String lastName;
     @Column(
-            nullable = false
+            nullable = false,
+            length = 50
     )
     private String username;
     @Column(
-            nullable = false
+            nullable = false,
+            length = 50
     )
     private String email;
     @Column(
@@ -53,15 +55,16 @@ public class AppUser {
     private LocalDateTime updatedAt;
     @Column(name = "blocked")
     private Boolean isBlocked;
-    @Column(name = "deleted")
-    private Boolean isDeleted;
+    @Column(name = "enabled")
+    private Boolean isEnabled;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
-    public void setRoles(List<Role> roleByName) {
+    public void setRoles(Set<Role> roleByName) {
+        this.roles = roleByName;
     }
 }

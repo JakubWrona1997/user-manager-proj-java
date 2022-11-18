@@ -8,29 +8,27 @@ import com.usermanagerproj.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.usermanagerproj.domain.role.ERole.ROLE_ADMIN;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
-    boolean alreadySetup = false;
+    private boolean alreadySetup = false;
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -43,17 +41,21 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createRoleIfNotFound(ROLE_ADMIN);
         createRoleIfNotFound(ERole.ROLE_USER);
 
-        Role adminRole = roleRepository.findRoleByName(ROLE_ADMIN);
-        AppUser user = new AppUser();
-        user.setFirstName("Test");
-        user.setLastName("Test");
-        user.setUsername("Tester");
-        user.setCreatedAt(LocalDateTime.now());
-        user.setPassword(passwordEncoder().encode("test"));
-        user.setEmail("test@test.com");
-        user.setRoles(Collections.singletonList(adminRole));
-        user.setIsBlocked(false);
-        userRepository.save(user);
+        Role superAdminRole = roleRepository.findRoleByName(ROLE_ADMIN);
+        AppUser newUser = new AppUser();
+        newUser.setFirstName("Test");
+        newUser.setLastName("Test");
+        newUser.setUsername("Tester");
+        newUser.setCreatedAt(LocalDateTime.now());
+        newUser.setPassword(passwordEncoder.encode("test"));
+        newUser.setEmail("test@test.com");
+        Set<Role> roles = new HashSet<>();
+        roles.add(superAdminRole);
+        newUser.setRoles(roles);
+        newUser.setIsBlocked(false);
+        newUser.setIsEnabled(true);
+
+        createUserIfNotExist(newUser);
 
         alreadySetup = true;
     }
@@ -64,6 +66,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         if (role == null) {
             role = new Role(name);
             roleRepository.save(role);
+        }
+    }
+
+    @Transactional
+    void createUserIfNotExist(AppUser user){
+
+        if(userRepository.findAppUserByUsername(user.getUsername()).isEmpty()){
+            userRepository.save(user);
         }
     }
 }
