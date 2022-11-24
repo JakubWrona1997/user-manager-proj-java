@@ -1,7 +1,7 @@
 package com.usermanagerproj.config.manager;
 
-import com.usermanagerproj.service.UserDetailsImpl;
-import com.usermanagerproj.service.UserDetailsServiceImpl;
+import com.usermanagerproj.service.user.UserDetailsImpl;
+import com.usermanagerproj.service.user.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -1,5 +1,6 @@
-package com.usermanagerproj.service;
+package com.usermanagerproj.service.user;
 
+import com.github.javafaker.App;
 import com.usermanagerproj.contracts.user.UserService;
 import com.usermanagerproj.domain.role.ERole;
 import com.usermanagerproj.domain.role.Role;
@@ -10,6 +11,8 @@ import com.usermanagerproj.dto.user.response.AppUserResponse;
 import com.usermanagerproj.exception.EntityNotFoundException;
 import com.usermanagerproj.repository.RoleRepository;
 import com.usermanagerproj.repository.UserRepository;
+import com.usermanagerproj.service.registration.token.ConfirmationToken;
+import com.usermanagerproj.service.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
+    private final ConfirmationTokenService confirmationTokenService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -40,12 +43,30 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(e);
         }
     }
+
     @Override
-    public AppUser saveUser(SignUpRequest signUpRequest) {
+    public AppUserResponse fetchUser(String username) {
+        return null;
+    }
 
-        AppUser newAppUser = setUpNewUser(new AppUser(), signUpRequest);
+    @Override
+    public String saveUser(AppUser appUser) {
 
-        return userRepository.save(newAppUser);
+        AppUser newAppUser = setUpNewUser(appUser);
+
+        userRepository.save(newAppUser);
+
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                newAppUser
+        );
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+        return token;
     }
 
     @Override
@@ -60,23 +81,24 @@ public class UserServiceImpl implements UserService {
         }
         else throw new EntityNotFoundException(uuid, AppUser.class);
     }
-    private AppUser setUpNewUser(AppUser appUser, SignUpRequest signUpRequest){
-        appUser.setUsername(signUpRequest.getUsername());
-        appUser.setEmail(signUpRequest.getEmail());
-        appUser.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        appUser.setCreatedAt(LocalDateTime.now());
-        appUser.setFirstName(signUpRequest.getFirstName());
-        appUser.setLastName(signUpRequest.getLastName());
-        appUser.setAge(signUpRequest.getAge());
-        appUser.setIsBlocked(false);
-        appUser.setIsEnabled(true);
+    private AppUser setUpNewUser(AppUser appUserRequest){
+        AppUser newAppUser = new AppUser();
+        newAppUser.setUsername(appUserRequest.getUsername());
+        newAppUser.setEmail(appUserRequest.getEmail());
+        newAppUser.setPassword(passwordEncoder.encode(appUserRequest.getPassword()));
+        newAppUser.setCreatedAt(LocalDateTime.now());
+        newAppUser.setFirstName(appUserRequest.getFirstName());
+        newAppUser.setLastName(appUserRequest.getLastName());
+        newAppUser.setAge(appUserRequest.getAge());
+        newAppUser.setIsBlocked(false);
+        newAppUser.setIsEnabled(true);
 
         Role userRole = roleRepository.findRoleByName(ERole.ROLE_USER);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
-        appUser.setRoles(roles);
+        newAppUser.setRoles(roles);
 
-        return appUser;
+        return newAppUser;
     }
 }
 

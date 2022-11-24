@@ -8,7 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -66,5 +68,19 @@ public class AppUser {
 
     public void setRoles(Set<Role> roleByName) {
         this.roles = roleByName;
+    }
+
+    public AppUser(String firstName, String lastName, String username, String email, String password, Integer age, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isBlocked, Boolean isEnabled, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.age = age;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.isBlocked = isBlocked;
+        this.isEnabled = isEnabled;
+        this.roles = roles;
     }
 }

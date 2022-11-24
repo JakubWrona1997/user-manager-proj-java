@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.usermanagerproj.config.ConfigProperties;
 import com.usermanagerproj.config.security.SecurityConstants;
-import com.usermanagerproj.service.UserDetailsServiceImpl;
+import com.usermanagerproj.service.user.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

@@ -1,5 +1,6 @@
 package com.usermanagerproj;
 
+import com.github.javafaker.Faker;
 import com.usermanagerproj.config.ConfigProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,5 +19,10 @@ public class UserServiceApplication {
 	@Bean
 	public PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public Faker faker(){
+		return new Faker();
 	}
 }

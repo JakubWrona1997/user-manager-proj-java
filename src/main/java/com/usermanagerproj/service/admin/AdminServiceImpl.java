@@ -1,10 +1,9 @@
-package com.usermanagerproj.service;
+package com.usermanagerproj.service.admin;
 
 import com.usermanagerproj.contracts.admin.AdminService;
 import com.usermanagerproj.domain.role.Role;
 import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.dto.user.request.CreateBasicUserRequest;
-import com.usermanagerproj.dto.user.request.SignUpRequest;
 import com.usermanagerproj.dto.user.request.UpdateDetailsRequest;
 import com.usermanagerproj.dto.user.response.AppUserResponse;
 import com.usermanagerproj.exception.EntityNotFoundException;
@@ -14,12 +13,16 @@ import com.usermanagerproj.service.registration.token.ConfirmationToken;
 import com.usermanagerproj.service.registration.token.ConfirmationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -30,10 +33,8 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
     private final ConfirmationTokenService confirmationTokenService;
-
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -54,6 +55,15 @@ public class AdminServiceImpl implements AdminService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    @Override
+    public List<AppUserResponse> fetchAllActiveUsers(int size, int page) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        List<AppUser> appUsers = userRepository.findAllByIsEnabled(true, pageRequest);
+
+        ModelMapper modelMapper = new ModelMapper();
+        Type listType = new TypeToken<List<AppUserResponse>>() {}.getType();
+        return modelMapper.map(appUsers, listType);
     }
 
     @Override

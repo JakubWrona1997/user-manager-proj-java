@@ -1,4 +1,4 @@
-package com.usermanagerproj.service;
+package com.usermanagerproj.service.user;
 
 import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.repository.UserRepository;
