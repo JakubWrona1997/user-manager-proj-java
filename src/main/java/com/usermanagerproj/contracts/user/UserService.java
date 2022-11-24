@@ -8,5 +8,6 @@ import java.util.UUID;
 
 public interface UserService extends BaseService {
     String saveUser(AppUser appUser);
+    int enableAppUser(String email);
     AppUser changePassword(UUID uuid, ChangePasswordRequest changePasswordRequest);
 }

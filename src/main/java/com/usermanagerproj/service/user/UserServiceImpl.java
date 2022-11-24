@@ -56,6 +56,10 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(newAppUser);
 
+        return createToken(newAppUser);
+    }
+
+    private String createToken(AppUser newAppUser) {
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
@@ -65,8 +69,12 @@ public class UserServiceImpl implements UserService {
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
         return token;
+    }
+
+    @Override
+    public int enableAppUser(String email) {
+        return userRepository.enableAppUser(email);
     }
 
     @Override
@@ -91,7 +99,7 @@ public class UserServiceImpl implements UserService {
         newAppUser.setLastName(appUserRequest.getLastName());
         newAppUser.setAge(appUserRequest.getAge());
         newAppUser.setIsBlocked(false);
-        newAppUser.setIsEnabled(true);
+        newAppUser.setIsEnabled(false);
 
         Role userRole = roleRepository.findRoleByName(ERole.ROLE_USER);
         Set<Role> roles = new HashSet<>();

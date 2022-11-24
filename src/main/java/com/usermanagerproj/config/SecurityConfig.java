@@ -24,7 +24,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final CustomAuthenticationManager customAuthenticationManager;
-
     private final ConfigProperties configProperties;
 
     @Bean
@@ -35,6 +34,7 @@ public class SecurityConfig {
                 .cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,SecurityConstants.REGISTER_URL).permitAll()
+                .regexMatchers(HttpMethod.GET,SecurityConstants.CONFIRM_URL_REGEX).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)

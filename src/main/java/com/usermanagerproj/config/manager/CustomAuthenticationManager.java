@@ -20,7 +20,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserDetailsImpl appUser = (UserDetailsImpl) userDetailsService.loadUserByUsername(authentication.getName());
-        if(!passwordEncoder.matches(authentication.getCredentials().toString(), appUser.getPassword()) && !appUser.isEnabled()){
+        if(!passwordEncoder.matches(authentication.getCredentials().toString(), appUser.getPassword()) || !appUser.isEnabled()){
             throw new BadCredentialsException("Invalid password or username");
         }
         if(!appUser.isAccountNonLocked()){
