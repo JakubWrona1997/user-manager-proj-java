@@ -25,4 +25,11 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
             "SET a.isEnabled = true " +
             "WHERE a.email = ?1")
     int enableAppUser(String email);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AppUser a " +
+            "SET a.isEnabled = false " +
+            "WHERE a.id = ?1")
+    int disableAppUser(UUID uuid);
 }

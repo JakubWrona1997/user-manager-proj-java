@@ -92,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteUser(UUID uuid) {
         try {
-            userRepository.deleteById(uuid);
+            userRepository.disableAppUser(uuid);
         } catch (Exception e) {
             throw new EntityNotFoundException(uuid, AppUser.class);
         }
