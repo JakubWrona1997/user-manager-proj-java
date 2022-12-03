@@ -7,10 +7,12 @@ import com.usermanagerproj.service.registration.email.EmailSender;
 import com.usermanagerproj.service.registration.token.ConfirmationToken;
 import com.usermanagerproj.service.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
@@ -69,6 +71,13 @@ public class RegistrationService {
                 email,
                 buildEmail(firstName, URL + token));
     }
+
+    @CachePut(cacheNames = "randomNumber", key = "#root.methodName")
+    public int generateRandomNumber(){
+        Random random = new Random();
+        return random.nextInt(20-1) + 1;
+    }
+
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +

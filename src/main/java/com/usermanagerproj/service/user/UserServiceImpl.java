@@ -1,12 +1,10 @@
 package com.usermanagerproj.service.user;
 
-import com.github.javafaker.App;
 import com.usermanagerproj.contracts.user.UserService;
 import com.usermanagerproj.domain.role.ERole;
 import com.usermanagerproj.domain.role.Role;
 import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.dto.user.request.ChangePasswordRequest;
-import com.usermanagerproj.dto.user.request.SignUpRequest;
 import com.usermanagerproj.dto.user.response.AppUserResponse;
 import com.usermanagerproj.exception.EntityNotFoundException;
 import com.usermanagerproj.repository.RoleRepository;
@@ -40,13 +38,18 @@ public class UserServiceImpl implements UserService {
         try {
             return unwrapAppUser(appUser, uuid);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new EntityNotFoundException(uuid, AppUser.class);
         }
     }
 
     @Override
     public AppUserResponse fetchUser(String username) {
-        return null;
+        Optional<AppUser> appUser = userRepository.findAppUserByUsername(username);
+        try {
+            return unwrapAppUser(appUser, appUser.get().getId());
+        } catch (IOException e) {
+            throw new EntityNotFoundException(username, AppUser.class);
+        }
     }
 
     @Override
@@ -89,6 +92,7 @@ public class UserServiceImpl implements UserService {
         }
         else throw new EntityNotFoundException(uuid, AppUser.class);
     }
+
     private AppUser setUpNewUser(AppUser appUserRequest){
         AppUser newAppUser = new AppUser();
         newAppUser.setUsername(appUserRequest.getUsername());

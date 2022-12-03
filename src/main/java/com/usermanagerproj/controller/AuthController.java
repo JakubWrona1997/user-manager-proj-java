@@ -29,4 +29,9 @@ public class AuthController {
     public ResponseEntity<String> confirmToken(@RequestParam String token) {
         return new ResponseEntity<>(registrationService.confirmToken(token), HttpStatus.OK);
     }
+
+    @GetMapping("/generatePassword")
+    public ResponseEntity<Integer> generateRandomPassword() {
+        return new ResponseEntity<>(registrationService.generateRandomNumber(), HttpStatus.OK);
+    }
 }

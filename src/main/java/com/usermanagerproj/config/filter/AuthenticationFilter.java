@@ -4,11 +4,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usermanagerproj.config.ConfigProperties;
-import com.usermanagerproj.config.manager.CustomAuthenticationManager;
+import com.usermanagerproj.config.manager.CustomAuthOneWayFunction;
 import com.usermanagerproj.config.security.SecurityConstants;
 import com.usermanagerproj.dto.user.request.SignInRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -24,20 +23,15 @@ import java.util.Date;
 
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final CustomAuthenticationManager authenticationManager;
-
+    private final CustomAuthOneWayFunction authenticationManager;
     private final ConfigProperties configProperties;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             SignInRequest authRequest = new ObjectMapper().readValue(request.getInputStream(), SignInRequest.class);
-            if(!authRequest.getPassword().equals(authRequest.getConfirmPassword()))
-            {
-                throw new BadCredentialsException("Password and Confirm Password must be the same");
-            }
             Authentication authentication = new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword());
-            return authenticationManager.authenticate(authentication);
+            return authenticationManager.authWithOneWayFunction(authentication, authRequest.getResult());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

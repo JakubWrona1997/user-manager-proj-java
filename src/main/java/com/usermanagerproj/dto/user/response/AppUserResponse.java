@@ -1,6 +1,5 @@
 package com.usermanagerproj.dto.user.response;
 
-import com.usermanagerproj.domain.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +15,6 @@ public class AppUserResponse {
     private String username;
     private String email;
     private Integer age;
-    private Set<Role> roles;
+    private Boolean isBlocked;
+    private Set<RoleDto> roles;
 }

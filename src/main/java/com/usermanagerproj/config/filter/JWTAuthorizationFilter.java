@@ -25,7 +25,6 @@ import java.util.UUID;
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final UserDetailsServiceImpl userDetailsService;
-
     private final ConfigProperties configProperties;
 
     @Override

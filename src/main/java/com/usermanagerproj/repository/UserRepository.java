@@ -15,6 +15,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<AppUser, UUID> {
     Optional<AppUser> findAppUserByUsername (String username);
+    @Query("SELECT u FROM AppUser u WHERE u.isEnabled = ?1")
     List<AppUser> findAllByIsEnabled(Boolean isEnabled, Pageable pageable);
     Boolean existsAppUserByUsername(String username);
     Boolean existsAppUserByEmail (String email);
@@ -32,4 +33,18 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
             "SET a.isEnabled = false " +
             "WHERE a.id = ?1")
     int disableAppUser(UUID uuid);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AppUser a " +
+            "SET a.isBlocked = true " +
+            "WHERE a.username = ?1")
+    int blockUser(String username);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AppUser a " +
+            "SET a.isBlocked = false " +
+            "WHERE a.username = ?1")
+    int unblockUser(String username);
 }

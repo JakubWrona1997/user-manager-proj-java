@@ -13,5 +13,7 @@ public interface AdminService extends BaseService {
     List<AppUserResponse> fetchAllActiveUsers(int size, int page);
     String createUser(CreateBasicUserRequest createBasicUserRequest);
     AppUser update(UUID uuid, UpdateDetailsRequest updateDetailsRequest);
+    String blockUser(String userName);
+    String unblockUser(String userName);
     void deleteUser(UUID uuid);
 }

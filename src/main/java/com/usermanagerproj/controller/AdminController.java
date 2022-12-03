@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,9 +31,24 @@ public class AdminController {
     private final UserService userService;
     private final AdminService adminService;
 
-    @GetMapping("/user")
+    @GetMapping("/currentUser")
     public ResponseEntity<AppUserResponse> getCurrentDetails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return new ResponseEntity<>(userService.fetchUser(userDetails.getUserid()), HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<AppUserResponse> getUser(@RequestParam String userName) {
+        return new ResponseEntity<>(userService.fetchUser(userName), HttpStatus.OK);
+    }
+
+    @PutMapping("/blockUser")
+    public ResponseEntity<String> blockUser(@RequestParam String userName) {
+        return new ResponseEntity<>(adminService.blockUser(userName), HttpStatus.OK);
+    }
+
+    @PutMapping("/unblockUser")
+    public ResponseEntity<String> unblockUser(@RequestParam String userName) {
+        return new ResponseEntity<>(adminService.unblockUser(userName), HttpStatus.OK);
     }
 
     @GetMapping("/users")

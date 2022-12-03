@@ -90,6 +90,28 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public String blockUser(String userName) {
+        try {
+            userRepository.blockUser(userName);
+            return "User blocked";
+        }
+        catch (Exception e) {
+            throw new EntityNotFoundException(userName,AppUser.class);
+        }
+    }
+
+    @Override
+    public String unblockUser(String userName) {
+        try {
+            userRepository.unblockUser(userName);
+            return "User unblocked";
+        }
+        catch (Exception e) {
+            throw new EntityNotFoundException(userName,AppUser.class);
+        }
+    }
+
+    @Override
     public void deleteUser(UUID uuid) {
         try {
             userRepository.disableAppUser(uuid);
@@ -121,7 +143,7 @@ public class AdminServiceImpl implements AdminService {
 
         return appUser;
     }
-    private String generateRandomPassword(){
-        return new Random().ints(10, 33, 122).mapToObj(i -> String.valueOf((char)i)).collect(Collectors.joining());
+    private String generateRandomPassword() {
+        return new Random().ints(10, 33, 122).mapToObj(i -> String.valueOf((char) i)).collect(Collectors.joining());
     }
 }

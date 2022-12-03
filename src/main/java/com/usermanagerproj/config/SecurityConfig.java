@@ -4,7 +4,7 @@ package com.usermanagerproj.config;
 import com.usermanagerproj.config.filter.AuthenticationFilter;
 import com.usermanagerproj.config.filter.ExceptionHandlerFilter;
 import com.usermanagerproj.config.filter.JWTAuthorizationFilter;
-import com.usermanagerproj.config.manager.CustomAuthenticationManager;
+import com.usermanagerproj.config.manager.CustomAuthOneWayFunction;
 import com.usermanagerproj.config.security.SecurityConstants;
 import com.usermanagerproj.service.user.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
-    private final CustomAuthenticationManager customAuthenticationManager;
+    private final CustomAuthOneWayFunction customAuthenticationManager;
     private final ConfigProperties configProperties;
 
     @Bean
@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,SecurityConstants.REGISTER_URL).permitAll()
                 .regexMatchers(HttpMethod.GET,SecurityConstants.CONFIRM_URL_REGEX).permitAll()
+                .regexMatchers(HttpMethod.GET,SecurityConstants.GENERATE_PASSWORD_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class)
