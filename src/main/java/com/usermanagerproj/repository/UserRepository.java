@@ -31,8 +31,8 @@ public interface UserRepository extends JpaRepository<AppUser, UUID> {
     @Modifying
     @Query("UPDATE AppUser a " +
             "SET a.isEnabled = false " +
-            "WHERE a.id = ?1")
-    int disableAppUser(UUID uuid);
+            "WHERE a.username = ?1")
+    int disableAppUser(String userName);
 
     @Transactional
     @Modifying

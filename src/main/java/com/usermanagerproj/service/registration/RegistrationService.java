@@ -3,6 +3,9 @@ package com.usermanagerproj.service.registration;
 import com.usermanagerproj.contracts.user.UserService;
 import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.dto.user.request.SignUpRequest;
+import com.usermanagerproj.event.Event;
+import com.usermanagerproj.event.EventType;
+import com.usermanagerproj.event.NotificationEventPublisher;
 import com.usermanagerproj.service.registration.email.EmailSender;
 import com.usermanagerproj.service.registration.token.ConfirmationToken;
 import com.usermanagerproj.service.registration.token.ConfirmationTokenService;
@@ -21,12 +24,15 @@ public class RegistrationService {
     private final UserService userService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final NotificationEventPublisher notificationEventPublisher;
 
     public String register(SignUpRequest request) {
 
         AppUser newAppUser = mapRequestToAppUser(request);
 
         String token = userService.saveUser(newAppUser);
+
+        notificationEventPublisher.publishEvent(new Event("User " + newAppUser.getUsername() + " has been registered", newAppUser.getUsername(), EventType.USER_REGISTERED));
 
         sendEmail(newAppUser.getEmail(), newAppUser.getFirstName(), token);
 
@@ -51,6 +57,8 @@ public class RegistrationService {
         confirmationTokenService.setConfirmedAt(token);
         userService.enableAppUser(
                 confirmationToken.getAppUser().getEmail());
+
+        notificationEventPublisher.publishEvent(new Event("User " + confirmationToken.getAppUser().getUsername() + " has been confirmed", confirmationToken.getAppUser().getUsername(), EventType.USER_CONFIRMED));
 
         return "Confirmed";
     }

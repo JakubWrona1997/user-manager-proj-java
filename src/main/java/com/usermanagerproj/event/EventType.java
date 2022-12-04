@@ -1,0 +1,17 @@
+package com.usermanagerproj.event;
+
+public enum EventType {
+    LOGGED_IN,
+    LOGGED_OUT,
+    REGISTERED,
+    USER_DELETED,
+    USER_UPDATED,
+    USER_REGISTERED,
+    USER_CONFIRMED,
+    USER_BLOCKED,
+    USER_UNBLOCKED,
+    USER_PASSWORD_CHANGED,
+    TOKEN_CREATED,
+    USER_CREATED,
+    PASSWORD_GENERATED
+}

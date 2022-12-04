@@ -6,7 +6,11 @@ import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.dto.user.request.CreateBasicUserRequest;
 import com.usermanagerproj.dto.user.request.UpdateDetailsRequest;
 import com.usermanagerproj.dto.user.response.AppUserResponse;
+import com.usermanagerproj.event.Event;
+import com.usermanagerproj.event.EventType;
+import com.usermanagerproj.event.NotificationEventPublisher;
 import com.usermanagerproj.exception.EntityNotFoundException;
+import com.usermanagerproj.repository.EventRepository;
 import com.usermanagerproj.repository.RoleRepository;
 import com.usermanagerproj.repository.UserRepository;
 import com.usermanagerproj.service.registration.token.ConfirmationToken;
@@ -15,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +40,10 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EventRepository eventRepository;
     private final ConfirmationTokenService confirmationTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationEventPublisher notificationEventPublisher;
 
     @Override
     public AppUserResponse fetchUser(UUID uuid) {
@@ -67,10 +75,18 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public List<Event> fetchAllEvents() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "eventDate");
+        return eventRepository.findAll(sort);
+    }
+
+    @Override
     public String createUser(CreateBasicUserRequest createBasicUserRequest) {
 
         AppUser newAppUser = setUpNewUser(new AppUser(), createBasicUserRequest);
         userRepository.save(newAppUser);
+
+        notificationEventPublisher.publishEvent(new Event("User created", newAppUser.getUsername(), EventType.USER_CREATED));
 
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
@@ -93,6 +109,7 @@ public class AdminServiceImpl implements AdminService {
     public String blockUser(String userName) {
         try {
             userRepository.blockUser(userName);
+            notificationEventPublisher.publishEvent(new Event("User blocked", userName, EventType.USER_BLOCKED));
             return "User blocked";
         }
         catch (Exception e) {
@@ -104,6 +121,7 @@ public class AdminServiceImpl implements AdminService {
     public String unblockUser(String userName) {
         try {
             userRepository.unblockUser(userName);
+            notificationEventPublisher.publishEvent(new Event("User unblocked", userName, EventType.USER_UNBLOCKED));
             return "User unblocked";
         }
         catch (Exception e) {
@@ -112,11 +130,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteUser(UUID uuid) {
+    public void deleteUser(String userName) {
         try {
-            userRepository.disableAppUser(uuid);
+            userRepository.disableAppUser(userName);
+            notificationEventPublisher.publishEvent(new Event("User deleted", userName, EventType.USER_DELETED));
         } catch (Exception e) {
-            throw new EntityNotFoundException(uuid, AppUser.class);
+            throw new EntityNotFoundException(userName, AppUser.class);
         }
     }
 

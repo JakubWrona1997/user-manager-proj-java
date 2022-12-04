@@ -6,6 +6,7 @@ import com.usermanagerproj.config.filter.ExceptionHandlerFilter;
 import com.usermanagerproj.config.filter.JWTAuthorizationFilter;
 import com.usermanagerproj.config.manager.CustomAuthOneWayFunction;
 import com.usermanagerproj.config.security.SecurityConstants;
+import com.usermanagerproj.event.NotificationEventPublisher;
 import com.usermanagerproj.service.user.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,8 @@ public class SecurityConfig {
         httpSecurity
                 .cors().and().csrf().disable()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, SecurityConstants.SWAGGER_URL).permitAll()
+                .antMatchers(HttpMethod.GET, SecurityConstants.API_DOCS).permitAll()
                 .antMatchers(HttpMethod.POST,SecurityConstants.REGISTER_URL).permitAll()
                 .regexMatchers(HttpMethod.GET,SecurityConstants.CONFIRM_URL_REGEX).permitAll()
                 .regexMatchers(HttpMethod.GET,SecurityConstants.GENERATE_PASSWORD_URL).permitAll()

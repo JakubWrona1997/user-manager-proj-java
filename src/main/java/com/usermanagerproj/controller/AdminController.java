@@ -5,6 +5,7 @@ import com.usermanagerproj.contracts.admin.AdminService;
 import com.usermanagerproj.contracts.user.UserService;
 import com.usermanagerproj.dto.user.request.CreateBasicUserRequest;
 import com.usermanagerproj.dto.user.response.AppUserResponse;
+import com.usermanagerproj.event.Event;
 import com.usermanagerproj.service.user.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 @RequestMapping("/api/v1/admin")
 public class AdminController {
     private final UserService userService;
@@ -36,7 +36,7 @@ public class AdminController {
         return new ResponseEntity<>(userService.fetchUser(userDetails.getUserid()), HttpStatus.OK);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/getUser")
     public ResponseEntity<AppUserResponse> getUser(@RequestParam String userName) {
         return new ResponseEntity<>(userService.fetchUser(userName), HttpStatus.OK);
     }
@@ -62,8 +62,13 @@ public class AdminController {
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser(@RequestParam UUID uuid) {
-        adminService.deleteUser(uuid);
+    public ResponseEntity<String> deleteUser(@RequestParam String username) {
+        adminService.deleteUser(username);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/events")
+    public ResponseEntity<List<Event>> getEvents() {
+        return new ResponseEntity<>(adminService.fetchAllEvents(), HttpStatus.OK);
     }
 }

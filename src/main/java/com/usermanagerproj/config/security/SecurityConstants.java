@@ -7,4 +7,6 @@ public class SecurityConstants {
     public static final String GENERATE_PASSWORD_URL = "/api/v1/auth/generatePassword";
     public static final String BEARER = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
+    public static final String SWAGGER_URL = "/swagger-ui/**";
+    public static final String API_DOCS = "/v3/api-docs/**";
 }

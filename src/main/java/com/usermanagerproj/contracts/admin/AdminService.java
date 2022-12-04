@@ -5,15 +5,17 @@ import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.dto.user.request.CreateBasicUserRequest;
 import com.usermanagerproj.dto.user.request.UpdateDetailsRequest;
 import com.usermanagerproj.dto.user.response.AppUserResponse;
+import com.usermanagerproj.event.Event;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface AdminService extends BaseService {
     List<AppUserResponse> fetchAllActiveUsers(int size, int page);
+    List<Event> fetchAllEvents();
     String createUser(CreateBasicUserRequest createBasicUserRequest);
     AppUser update(UUID uuid, UpdateDetailsRequest updateDetailsRequest);
     String blockUser(String userName);
     String unblockUser(String userName);
-    void deleteUser(UUID uuid);
+    void deleteUser(String userName);
 }
