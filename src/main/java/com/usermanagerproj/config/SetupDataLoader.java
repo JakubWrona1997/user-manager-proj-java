@@ -6,6 +6,7 @@ import com.usermanagerproj.domain.role.Role;
 import com.usermanagerproj.domain.user.AppUser;
 import com.usermanagerproj.repository.RoleRepository;
 import com.usermanagerproj.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import static com.usermanagerproj.domain.role.ERole.ROLE_ADMIN;
 import static com.usermanagerproj.domain.role.ERole.ROLE_USER;
 
 @Component
+@Slf4j
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     private final UserRepository userRepository;
@@ -41,8 +43,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
-        if (userRepository.existsAppUserByUsername("Tester"))
+        if (userRepository.existsAppUserByUsername("Tester")){
+            log.info("Data already loaded");
             return;
+        }
+
+        log.info("Loading data...");
 
         createRoleIfNotFound(ERole.ROLE_SUPERADMIN);
         createRoleIfNotFound(ROLE_ADMIN);
@@ -54,6 +60,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         Role adminRole = roleRepository.findRoleByName(ROLE_ADMIN);
         createUserIfNotExist(adminRole);
+
+        log.info("Data loaded");
     }
     @Transactional
     void createRoleIfNotFound(ERole name) {

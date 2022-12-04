@@ -1,8 +1,5 @@
 package com.usermanagerproj.config.manager;
 
-import com.usermanagerproj.event.Event;
-import com.usermanagerproj.event.EventType;
-import com.usermanagerproj.event.NotificationEventPublisher;
 import com.usermanagerproj.service.user.UserDetailsImpl;
 import com.usermanagerproj.service.user.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;

@@ -2,7 +2,6 @@ package com.usermanagerproj.controller;
 
 import com.usermanagerproj.contracts.user.UserService;
 import com.usermanagerproj.dto.user.request.ChangePasswordRequest;
-import com.usermanagerproj.dto.user.request.SignUpRequest;
 import com.usermanagerproj.service.user.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
